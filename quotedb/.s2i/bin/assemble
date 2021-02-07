@@ -6,7 +6,8 @@ set -o pipefail
 
 shopt -s dotglob
 echo "---> Installing application source $PWD ..."
-mv /tmp/src/* ./ 2>/dev/null || true
+#mv /tmp/src/* ./ 2>/dev/null || true
+mv -v /tmp/src/* ./ 
 WHERE=$(pwd)
 echo "---> did move actually work!? $WHERE"
 
