@@ -8,5 +8,5 @@ USER 1001
 
 EXPOSE 8080
 
-CMD /usr/sbin/httpd -DFOREGROUND
+# CMD /usr/sbin/httpd -DFOREGROUND
 
