@@ -1,0 +1,35 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    build: cp
+  name: cp
+  namespace: books-dev
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output: {}
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    contextDir: books
+    git:
+      ref: cp
+      uri: https://github.com/mazmarz/DO288-apps-v1
+    type: Git
+  strategy:
+    jenkinsPipelineStrategy: 
+      jenkinsfilePath: jenkins/Jenkinsfile
+    type: JenkinsPipeline
+  successfulBuildsHistoryLimit: 5
+  triggers:
+  - github:
+      secret: WODSpyneB7pCumZoWeAP
+    type: GitHub
+  - generic:
+      secret: qVwMlY_SRfdmKAKMTc-m
+    type: Generic
+  - type: ConfigChange
+status:
+  lastVersion: 1
