@@ -116,6 +116,7 @@ pipeline {
                 script {
                     openshift.withCluster() {
                     // TODO: Tag the ${APP_NAME}:latest image stream in the dev env as ${APP_NAME}:stage in staging
+                            openshift.tag("${DEV_PROJECT}/${APP_NAME}:latest","${STAGE_PROJECT}/${APP_NAME}:stage")
                     }
                 }
             }
@@ -131,6 +132,10 @@ pipeline {
                    '''
 
                 echo '### Creating a new app in Staging ###'
+                sh '''
+                        oc new-app --name=${APP_NAME}  -i ${APP_NAME}  --as-deploymentconfig -n ${STAGE_PROJECT}
+                        oc expose svc/${APP_NAME}
+                   '''
                 // TODO: Create a new app in staging and expose the service
             }
         }
