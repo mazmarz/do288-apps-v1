@@ -85,7 +85,8 @@ pipeline {
                 echo '### Start DEV application from IS ###'
                 sh '''
                         oc new-app --name=${APP_NAME}  -i ${APP_NAME}  --as-deployment-config -n ${DEV_PROJECT}
-                        oc expose svc/${APP_NAME}
+                        oc project
+                        oc expose svc/${APP_NAME} -n ${DEV_PROJECT}
                    '''
                 // TODO: Expose the ${APP_NAME} service for external access
             }
@@ -134,7 +135,7 @@ pipeline {
                 echo '### Creating a new app in Staging ###'
                 sh '''
                         oc new-app --name=${APP_NAME}  -i ${APP_NAME}  --as-deployment-config -n ${STAGE_PROJECT}
-                        oc expose svc/${APP_NAME}
+                        oc expose svc/${APP_NAME} -n ${STAGE_PROJECT}
                    '''
                 // TODO: Create a new app in staging and expose the service
             }
