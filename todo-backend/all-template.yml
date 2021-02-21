@@ -167,6 +167,26 @@ objects:
               - containerPort: 8080
                 protocol: TCP
             resources: {}
+            livenessProbe:
+              failureThreshold: 3
+              httpGet:
+                path: /todo/api/items-count
+                port: 8080
+                scheme: HTTP
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 3
+            readinessProbe:
+              failureThreshold: 3
+              httpGet:
+                path: /todo/api/hosts
+                port: 8080
+                scheme: HTTP
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 3
             terminationMessagePath: /dev/termination-log
             terminationMessagePolicy: File
         dnsPolicy: ClusterFirst
@@ -392,7 +412,7 @@ parameters:
 - name: CLEAN_DATABASE
   description: "init database or not; bool"
   required: true
-  value: true
+  value: 'true'
 - name: SECRET
   description: "secret for webhooks"
   generate: expression
