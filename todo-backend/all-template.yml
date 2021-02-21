@@ -308,6 +308,9 @@ objects:
       spec:
         containers:
           - imagePullPolicy: Always
+            env:
+              name: BACKEND_HOST
+              value: ${BACKEND}
             name: fe
             ports:
               - containerPort: 8080
@@ -388,6 +391,42 @@ objects:
       deploymentconfig: tododb
     sessionAffinity: None
     type: ClusterIP
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    labels:
+      app: be
+      app.kubernetes.io/component: be
+      app.kubernetes.io/instance: be
+    name: be
+  spec:
+    host: ${BACKEND}
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: be
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    labels:
+      app: fe
+      app.kubernetes.io/component: fe
+      app.kubernetes.io/instance: fe
+    name: fe
+  spec:
+    host: ${HOSTNAME}
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: be
+      weight: 100
+    wildcardPolicy: None
+  status: {}
 parameters:
 - name: DATABASE_IMAGE
   description: "image to use for tododb"
@@ -405,6 +444,14 @@ parameters:
   description: "branck for url to backend sources"
   required: true
   value: todo-backend
+- name: BACKEND
+  description: "backend api"
+  required: true
+  value: todoapi.apps.cluster-93f5.sandbox688.opentlc.com
+- name: HOSTNAME
+  description: "hostname for UI"
+  required: true
+  value: todoui.apps.cluster-93f5.sandbox688.opentlc.com
 - name: PASSWORD
   description: "db password"
   required: true
