@@ -23,6 +23,22 @@ objects:
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
+    name: tododb
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: ${DATABASE_IMAGE}
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: local
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
     labels:
       app: be
       app.kubernetes.io/component: be
@@ -237,8 +253,7 @@ objects:
             - tododb
           from:
             kind: ImageStreamTag
-            name: mysql:5.7
-            namespace: openshift
+            name: tododb:latest
         type: ImageChange
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
@@ -298,3 +313,8 @@ objects:
             name: todo-frontend:latest
             namespace: common
         type: ImageChange
+parameters:
+- name: DATABASE_IMAGE
+  description: "image to use for tododb"
+  required: true
+  value: registry.access.redhat.com/rhscl/mysql-57-rhel7 
