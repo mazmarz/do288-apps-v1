@@ -48,13 +48,12 @@ objects:
     lookupPolicy:
       local: false
 - apiVersion: v1
-  data:
-    password: bXlwYXNz
-    user: dG9kb2FwcA==
+  stringData:
+    password: ${PASSWORD}
+    user: todoapp
   kind: Secret
   metadata:
     name: mysql-env
-  type: Opaque
 - apiVersion: v1
   data:
     init: "true"
@@ -82,10 +81,10 @@ objects:
     resources: {}
     runPolicy: Serial
     source:
-      contextDir: todo-backend
-      git:
-        ref: todo-backend
-        uri: https://github.com/mazmarz/DO288-apps-v1
+      contextDir: ${BACK_END_CTXDIR}
+      git: 
+        ref: ${BACK_END_BRANCH}
+        uri: ${BACK_END_REPO}
       type: Git
     strategy:
       sourceStrategy:
@@ -318,3 +317,23 @@ parameters:
   description: "image to use for tododb"
   required: true
   value: registry.access.redhat.com/rhscl/mysql-57-rhel7 
+- name: BACK_END_REPO
+  description: "url to backend sources"
+  required: true
+  value: https://github.com/mazmarz/DO288-apps-v1
+- name: BACK_END_CTXDIR
+  description: "context dir for url to backend sources"
+  required: true
+  value: todo-backend
+- name: BACK_END_BRANCH
+  description: "branck for url to backend sources"
+  required: true
+  value: todo-backend
+- name: PASSWORD
+  description: "db password"
+  required: true
+  value: mypass
+- name: SECRET
+  description: "secret for webhooks"
+  generate: expression
+  from: "[0-9]{8}"
