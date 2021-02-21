@@ -180,7 +180,7 @@ objects:
             readinessProbe:
               failureThreshold: 3
               httpGet:
-                path: /todo/api/hosts
+                path: /todo/api/host
                 port: 8080
                 scheme: HTTP
               initialDelaySeconds: 10
