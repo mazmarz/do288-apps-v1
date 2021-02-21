@@ -1,0 +1,171 @@
+apiVersion:  template.openshift.io/v1
+kind: Template
+metadata:
+  name: db-be-fe
+objects:	
+- apiVersion: v1
+  data:
+    password: bXlwYXNz
+    user: dG9kb2FwcA==
+  kind: Secret
+  metadata:
+    name: mysql-env
+    namespace: dockerfile
+  type: Opaque
+- apiVersion: v1
+  data:
+    init: "true"
+    name: todo
+    svc: tododb
+  kind: ConfigMap
+  metadata:
+    name: back-env
+    namespace: dockerfile
+- apiVersion: image.openshift.io/v1
+  generation: 1
+  kind: ImageStreamTag
+  lookupPolicy:
+    local: false
+  metadata:
+    labels:
+      app: be
+      app.kubernetes.io/component: be
+      app.kubernetes.io/instance: be
+    name: be:latest
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: be
+      app.kubernetes.io/component: be
+      app.kubernetes.io/instance: be
+    name: be
+    namespace: dockerfile
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: be:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: todo-backend
+      git:
+        ref: todo-backend
+        uri: https://github.com/mazmarz/DO288-apps-v1
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: nodejs:12
+          namespace: openshift
+      type: Source
+    successfulBuildsHistoryLimit: 5
+    triggers:
+      - github:
+          secret: ODOJIG5gyR1PGaV3CX9U
+        type: GitHub
+      - generic:
+          secret: L1NN8W_T6EExWOjOs2eG
+        type: Generic
+      - type: ConfigChange
+        type: ImageChange
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: be
+      app.kubernetes.io/component: be
+      app.kubernetes.io/instance: be
+    name: be
+    namespace: dockerfile
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentconfig: be
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deploymentconfig: be
+      spec:
+        containers:
+          - env:
+              - name: DATABASE_USER
+                valueFrom:
+                  secretKeyRef:
+                    key: user
+                    name: mysql-env
+              - name: DATABASE_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: password
+                    name: mysql-env
+              - name: DATABASE_INIT
+                valueFrom:
+                  configMapKeyRef:
+                    key: init
+                    name: back-env
+              - name: DATABASE_NAME
+                valueFrom:
+                  configMapKeyRef:
+                    key: name
+                    name: back-env
+              - name: DATABASE_SVC
+                valueFrom:
+                  configMapKeyRef:
+                    key: svc
+                    name: back-env
+            imagePullPolicy: Always
+            name: be
+            ports:
+              - containerPort: 8080
+                protocol: TCP
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+            - be
+          from:
+            kind: ImageStreamTag
+            name: be:latest
+            namespace: dockerfile
+        type: ImageChange
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: be
+    app.kubernetes.io/component: be
+    app.kubernetes.io/instance: be
+  name: be
+  namespace: dockerfile
+spec:
+  lookupPolicy:
+    local: false
