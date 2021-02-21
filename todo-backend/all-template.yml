@@ -56,7 +56,7 @@ objects:
     name: mysql-env
 - apiVersion: v1
   data:
-    init: "true"
+    init: ${CLEAN_DATABASE}
     name: todo
     svc: tododb
   kind: ConfigMap
@@ -312,6 +312,62 @@ objects:
             name: todo-frontend:latest
             namespace: common
         type: ImageChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: be
+      app.kubernetes.io/component: be
+      app.kubernetes.io/instance: be
+    name: be
+  spec:
+    ports:
+      - name: 8080-tcp
+        port: 8080
+        protocol: TCP
+        targetPort: 8080
+    selector:
+      deploymentconfig: be
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: fe
+      app.kubernetes.io/component: fe
+      app.kubernetes.io/instance: fe
+      app.kubernetes.io/name: todo-frontend
+    name: fe
+  spec:
+    ports:
+      - name: 8080-tcp
+        port: 8080
+        protocol: TCP
+        targetPort: 8080
+    selector:
+      deploymentconfig: fe
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: tododb
+      app.kubernetes.io/component: tododb
+      app.kubernetes.io/instance: tododb
+      app.kubernetes.io/name: mysql
+    name: tododb
+  spec:
+    ports:
+      - name: 3306-tcp
+        port: 3306
+        protocol: TCP
+        targetPort: 3306
+    selector:
+      deploymentconfig: tododb
+    sessionAffinity: None
+    type: ClusterIP
 parameters:
 - name: DATABASE_IMAGE
   description: "image to use for tododb"
@@ -333,6 +389,10 @@ parameters:
   description: "db password"
   required: true
   value: mypass
+- name: CLEAN_DATABASE
+  description: "init database or not; bool"
+  required: true
+  value: true
 - name: SECRET
   description: "secret for webhooks"
   generate: expression
