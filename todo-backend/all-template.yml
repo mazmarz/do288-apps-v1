@@ -423,7 +423,7 @@ objects:
       targetPort: 8080-tcp
     to:
       kind: Service
-      name: be
+      name: fe
       weight: 100
     wildcardPolicy: None
   status: {}
