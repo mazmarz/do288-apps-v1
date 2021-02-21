@@ -309,7 +309,7 @@ objects:
         containers:
           - imagePullPolicy: Always
             env:
-              name: BACKEND_HOST
+            - name: BACKEND_HOST
               value: ${BACKEND}
             name: fe
             ports:
