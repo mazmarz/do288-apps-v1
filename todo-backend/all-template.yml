@@ -152,3 +152,75 @@ objects:
             kind: ImageStreamTag
             name: be:latest
         type: ImageChange
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: tododb
+      app.kubernetes.io/component: tododb
+      app.kubernetes.io/instance: tododb
+      app.kubernetes.io/name: mysql
+    name: tododb
+    namespace: dockerfile
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentconfig: tododb
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deploymentconfig: tododb
+      spec:
+        containers:
+          - env:
+              - name: MYSQL_DATABASE
+                value: todo
+              - name: MYSQL_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: password
+                    name: mysql-env
+              - name: MYSQL_USER
+                valueFrom:
+                  secretKeyRef:
+                    key: user
+                    name: mysql-env
+            imagePullPolicy: IfNotPresent
+            name: tododb
+            ports:
+              - containerPort: 3306
+                protocol: TCP
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+      - type: ConfigChange
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+            - tododb
+          from:
+            kind: ImageStreamTag
+            name: mysql:5.7
+            namespace: openshift
+        type: ImageChange
