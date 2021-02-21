@@ -7,7 +7,6 @@ objects:
   kind: ImageStream
   metadata:
     name: fe
-    namespace: dockerfile
   spec:
     lookupPolicy:
       local: false
@@ -179,7 +178,6 @@ objects:
       app.kubernetes.io/instance: tododb
       app.kubernetes.io/name: mysql
     name: tododb
-    namespace: dockerfile
   spec:
     replicas: 1
     revisionHistoryLimit: 10
@@ -251,7 +249,6 @@ objects:
       app.kubernetes.io/instance: fe
       app.kubernetes.io/name: todo-frontend
     name: fe
-    namespace: dockerfile
   spec:
     replicas: 1
     revisionHistoryLimit: 10
