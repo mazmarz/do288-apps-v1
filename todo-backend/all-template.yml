@@ -3,6 +3,17 @@ kind: Template
 metadata:
   name: db-be-fe
 objects:	
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: be
+      app.kubernetes.io/component: be
+      app.kubernetes.io/instance: be
+    name: be
+  spec:
+    lookupPolicy:
+      local: false
 - apiVersion: v1
   data:
     password: bXlwYXNz
@@ -10,7 +21,6 @@ objects:
   kind: Secret
   metadata:
     name: mysql-env
-    namespace: dockerfile
   type: Opaque
 - apiVersion: v1
   data:
@@ -20,18 +30,6 @@ objects:
   kind: ConfigMap
   metadata:
     name: back-env
-    namespace: dockerfile
-- apiVersion: image.openshift.io/v1
-  generation: 1
-  kind: ImageStreamTag
-  lookupPolicy:
-    local: false
-  metadata:
-    labels:
-      app: be
-      app.kubernetes.io/component: be
-      app.kubernetes.io/instance: be
-    name: be:latest
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:
@@ -40,7 +38,6 @@ objects:
       app.kubernetes.io/component: be
       app.kubernetes.io/instance: be
     name: be
-    namespace: dockerfile
   spec:
     failedBuildsHistoryLimit: 5
     nodeSelector: null
@@ -82,7 +79,6 @@ objects:
       app.kubernetes.io/component: be
       app.kubernetes.io/instance: be
     name: be
-    namespace: dockerfile
   spec:
     replicas: 1
     revisionHistoryLimit: 10
@@ -155,17 +151,4 @@ objects:
           from:
             kind: ImageStreamTag
             name: be:latest
-            namespace: dockerfile
         type: ImageChange
-apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  labels:
-    app: be
-    app.kubernetes.io/component: be
-    app.kubernetes.io/instance: be
-  name: be
-  namespace: dockerfile
-spec:
-  lookupPolicy:
-    local: false
