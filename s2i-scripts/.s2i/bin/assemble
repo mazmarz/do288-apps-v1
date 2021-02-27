@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 source ${HTTPD_CONTAINER_SCRIPTS_PATH}/common.sh
 
