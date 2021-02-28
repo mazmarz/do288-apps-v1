@@ -1,0 +1,33 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: "2021-02-28T10:00:21Z"
+  labels:
+    app: quotesdb
+    app.kubernetes.io/component: quotesdb
+    app.kubernetes.io/instance: quotesdb
+    app.kubernetes.io/name: mysql
+  name: quotesdb
+  namespace: quotes-dev
+  resourceVersion: "1058644"
+  selfLink: /api/v1/namespaces/quotes-dev/services/quotesdb
+  uid: b6fa059c-96d1-4de3-b2c0-0ad524864c1a
+spec:
+  clusterIP: 172.30.6.40
+  ports:
+  - name: 3306-tcp
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
+  selector:
+    deploymentconfig: quotesdb
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

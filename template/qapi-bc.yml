@@ -1,0 +1,55 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: "2021-02-28T14:05:29Z"
+  labels:
+    app: quotesapi
+    app.kubernetes.io/component: quotesapi
+    app.kubernetes.io/instance: quotesapi
+  name: quotesapi
+  namespace: quotes-dev
+  resourceVersion: "1128974"
+  selfLink: /apis/build.openshift.io/v1/namespaces/quotes-dev/buildconfigs/quotesapi
+  uid: d5713104-1ab0-47f6-85de-fef50af69b84
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: quotesapi:latest
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    contextDir: quotes
+    git:
+      uri: https://github.com/mazmarz/DO288-apps-v1
+    type: Git
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: php:7.2
+        namespace: openshift
+    type: Source
+  successfulBuildsHistoryLimit: 5
+  triggers:
+  - github:
+      secret: d7mYO1yY1eokyK_Jx1u-
+    type: GitHub
+  - generic:
+      secret: Fs6n5-m-Y_TwDHTvQpPn
+    type: Generic
+  - type: ConfigChange
+  - imageChange:
+      lastTriggeredImageID: image-registry.openshift-image-registry.svc:5000/openshift/php@sha256:cee55e4fa48f3536b478789018d466eb417ddb8360d0608f3d48cb5b72a77fca
+    type: ImageChange
+status:
+  lastVersion: 1

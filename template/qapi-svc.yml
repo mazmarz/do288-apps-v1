@@ -1,0 +1,36 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: "2021-02-28T14:05:29Z"
+  labels:
+    app: quotesapi
+    app.kubernetes.io/component: quotesapi
+    app.kubernetes.io/instance: quotesapi
+  name: quotesapi
+  namespace: quotes-dev
+  resourceVersion: "1128970"
+  selfLink: /api/v1/namespaces/quotes-dev/services/quotesapi
+  uid: fedaf8c9-bb32-42ba-a996-cddddf6746be
+spec:
+  clusterIP: 172.30.207.111
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  - name: 8443-tcp
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    deploymentconfig: quotesapi
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -1,0 +1,39 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations:
+    openshift.io/image.dockerRepositoryCheck: "2021-02-28T10:00:24Z"
+  creationTimestamp: "2021-02-28T10:00:21Z"
+  generation: 2
+  name: quotesdb
+  namespace: quotes-dev
+  resourceVersion: "1058679"
+  selfLink: /apis/image.openshift.io/v1/namespaces/quotes-dev/imagestreams/quotesdb
+  uid: 90f90cf9-6418-4874-939e-82f49313fd4e
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - annotations: null
+    from:
+      kind: DockerImage
+      name: image-registry.openshift-image-registry.svc:5000/openshift/mysql:5.7
+    generation: 2
+    importPolicy: {}
+    name: "5.7"
+    referencePolicy:
+      type: Source
+status:
+  dockerImageRepository: image-registry.openshift-image-registry.svc:5000/quotes-dev/quotesdb
+  publicDockerImageRepository: default-route-openshift-image-registry.apps.cluster-eb12.sandbox1899.opentlc.com/quotes-dev/quotesdb
+  tags:
+  - items:
+    - created: "2021-02-28T10:00:24Z"
+      dockerImageReference: image-registry.openshift-image-registry.svc:5000/openshift/mysql@sha256:9a781abe7581cc141e14a7e404ec34125b3e89c008b14f4e7b41e094fd3049fe
+      generation: 2
+      image: sha256:9a781abe7581cc141e14a7e404ec34125b3e89c008b14f4e7b41e094fd3049fe
+    tag: "5.7"
