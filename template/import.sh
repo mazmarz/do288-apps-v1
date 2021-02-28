@@ -24,6 +24,7 @@ while [ "$HOOK_RETRIES" != 0 ]; do
     break
   else
     echo 'Database is down'
+    echo "mysqlshow -h$MYSQL_SERVICE_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD -P3306 $MYSQL_DATABASE"
 
     # Sleep to wait for the MySQL pod to be ready
     sleep $HOOK_SLEEP

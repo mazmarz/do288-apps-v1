@@ -92,6 +92,14 @@ objects:
         maxUnavailable: 25%
         timeoutSeconds: 600
         updatePeriodSeconds: 1
+        post:
+          execNewPod:
+            containerName: quotesdb 
+            command:
+            - bash
+            - -c
+            - "curl http://repo:8080/quote.sql -o /tmp/quote.sql && curl http://repo:8080/import.sh -o /tmp/import.sh && chmod 755 /tmp/import.sh && /tmp/import.sh"
+          failurePolicy: Abort
       type: Rolling
     template:
       metadata:
@@ -106,6 +114,10 @@ objects:
             value: redhat
           - name: MYSQL_USER
             value: quoteapp
+          - name: HOOK_RETRIES
+            value: '3'
+          - name: MYSQL_SERVICE_HOST
+            value: quotesdb
           imagePullPolicy: IfNotPresent
           name: quotesdb
           volumeMounts:
