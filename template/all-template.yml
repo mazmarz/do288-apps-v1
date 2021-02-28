@@ -5,6 +5,129 @@ labels:
 metadata:
   name: quotes
 objects:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: repo
+      app.kubernetes.io/component: quotesapi
+      app.kubernetes.io/instance: quotesapi
+    name: repo
+    namespace: quotes-dev
+  spec:
+    lookupPolicy:
+      local: false
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      template.alpha.openshift.io/wait-for-ready: "true"
+    labels:
+      app: repo
+      app.kubernetes.io/component: repo
+      app.kubernetes.io/instance: repo
+    name: repo
+    namespace: quotes-dev
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: repo:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: template
+      git:
+        ref: template
+        uri: https://github.com/mazmarz/DO288-apps-v1
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: httpd:2.4
+          namespace: openshift
+      type: Source
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - github:
+        secret: ksPWDDb-XIs3jqGnQSoi
+      type: GitHub
+    - generic:
+        secret: jD2Rmb_Ef-_hL1ls6WCl
+      type: Generic
+    - type: ConfigChange
+    - imageChange:
+      type: ImageChange
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: repo
+      app.kubernetes.io/component: repo
+      app.kubernetes.io/instance: repo
+    name: repo
+    namespace: quotes-dev
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentconfig: repo
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deploymentconfig: repo
+      spec:
+        containers:
+        - imagePullPolicy: Always
+          name: repo
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          resources: {}
+          readinessProbe:
+            timeoutSeconds: 30
+            initialDelaySeconds: 5
+            httpGet:
+              path: /quote.sql
+              port: 8080
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - repo
+        from:
+          kind: ImageStreamTag
+          name: repo:latest
+          namespace: quotes-dev
+      type: ImageChange
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -99,7 +222,7 @@ objects:
             - bash
             - -c
             - "curl http://repo:8080/quote.sql -o /tmp/quote.sql && curl http://repo:8080/import.sh -o /tmp/import.sh && chmod 755 /tmp/import.sh && /tmp/import.sh"
-          failurePolicy: Abort
+          failurePolicy: Retry
       type: Rolling
     template:
       metadata:
@@ -115,7 +238,7 @@ objects:
           - name: MYSQL_USER
             value: quoteapp
           - name: HOOK_RETRIES
-            value: '3'
+            value: '5'
           - name: MYSQL_SERVICE_HOST
             value: quotesdb
           imagePullPolicy: IfNotPresent
@@ -220,13 +343,35 @@ objects:
   kind: Service
   metadata:
     labels:
+      app: repo
+      app.kubernetes.io/component: quotesapi
+      app.kubernetes.io/instance: quotesapi
+    name: repo
+    namespace: quotes-dev
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    selector:
+      deploymentconfig: repo
+    sessionAffinity: None
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
       app: quotesapi
       app.kubernetes.io/component: quotesapi
       app.kubernetes.io/instance: quotesapi
     name: quotesapi
     namespace: quotes-dev
   spec:
-    clusterIP: 172.30.207.111
     ports:
     - name: 8080-tcp
       port: 8080
@@ -251,7 +396,6 @@ objects:
     name: quotesdb
     namespace: quotes-dev
   spec:
-    clusterIP: 172.30.6.40
     ports:
     - name: 3306-tcp
       port: 3306
