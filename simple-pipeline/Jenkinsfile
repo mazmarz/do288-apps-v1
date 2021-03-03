@@ -33,6 +33,8 @@ pipeline {
                       echo hello
                   '''
             }
+          }
+
         }
         // TODO: ADD AN APPROVAL STAGE
 
