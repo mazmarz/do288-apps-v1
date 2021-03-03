@@ -23,14 +23,16 @@ pipeline {
             }
         }
 
-        // TODO: ADD A STAGE THAT SAYS HELLO
         stage('question') {
             steps {
+
+                script {
                 timeout(time: 60, unit: 'MINUTES') {
                       input message: "Move to stage 3?"
                   }
+                  }
              }
-             }
+        }
 
         stage('stage 2') {
             steps {
