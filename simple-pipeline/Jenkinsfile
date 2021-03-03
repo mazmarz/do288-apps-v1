@@ -31,9 +31,13 @@ pipeline {
                   sh '''
                       echo hello
                   '''
-        timeout(time: 30, unit: 'MINUTES')
             }
           }
+            steps {
+                timeout(time: 60, unit: 'MINUTES') {
+                      input message: "Move to stage 3?"
+                  }
+             }
 
         }
         // TODO: ADD AN APPROVAL STAGE
