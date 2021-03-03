@@ -24,6 +24,13 @@ pipeline {
         }
 
         // TODO: ADD A STAGE THAT SAYS HELLO
+        stage('question') {
+            steps {
+                timeout(time: 60, unit: 'MINUTES') {
+                      input message: "Move to stage 3?"
+                  }
+             }
+             }
 
         stage('stage 2') {
             steps {
@@ -33,11 +40,6 @@ pipeline {
                   '''
             }
           }
-            steps {
-                timeout(time: 60, unit: 'MINUTES') {
-                      input message: "Move to stage 3?"
-                  }
-             }
 
         }
         // TODO: ADD AN APPROVAL STAGE
