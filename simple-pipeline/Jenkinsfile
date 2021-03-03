@@ -32,16 +32,13 @@ pipeline {
                   }
                   }
              }
-        }
+        
 
-        stage('stage 2') {
-            steps {
                 script {
                   sh '''
                       echo hello
                   '''
             }
-          }
 
         }
         // TODO: ADD AN APPROVAL STAGE
