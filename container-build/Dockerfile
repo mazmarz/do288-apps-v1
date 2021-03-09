@@ -1,2 +1,4 @@
 # Use the httpd-parent image as base
 FROM quay.io/redhattraining/httpd-parent
+
+RUN sed  -ie 's/Listen 80/Listen 8080/p' /etc/httpd/conf/httpd.conf 
