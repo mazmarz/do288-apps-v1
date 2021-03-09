@@ -12,7 +12,7 @@ fi
 cd /tmp
 
 echo 'Downloading SQL script that initializes the database...'
-curl -s -L -O https://github.com/RedHatTraining/DO288-apps/releases/download/OCP-4.1-1/users.sql
+curl -s -L -O https://repo:8080/users.sql
 
 echo "Trying $HOOK_RETRIES times, sleeping $HOOK_SLEEP sec between tries:"
 while [ "$HOOK_RETRIES" != 0 ]; do
