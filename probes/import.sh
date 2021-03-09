@@ -12,7 +12,7 @@ fi
 cd /tmp
 
 echo 'Downloading SQL script that initializes the database...'
-curl -s -L -O https://repo:8080/users.sql
+curl -s -L -O http://repo:8080/users.sql
 
 echo "Trying $HOOK_RETRIES times, sleeping $HOOK_SLEEP sec between tries:"
 while [ "$HOOK_RETRIES" != 0 ]; do
