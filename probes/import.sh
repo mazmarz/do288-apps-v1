@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # get timer and retries from env
 
